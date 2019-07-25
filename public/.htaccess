@@ -1,0 +1,22 @@
+# Fichier nommé forcémment .htaccess
+# Il permet de modifier la façon dont Apache (logiciel serveur) va
+# traiter notre site
+# Ici, on souhaite modifier la façon d'interprếter les URL
+
+# On active les réécritures d'URL au niveau d'Apache
+RewriteEngine On
+
+# dynamically setup base URI
+RewriteCond %{REQUEST_URI}::$1 ^(/.+)/(.*)::\2$
+RewriteRule ^(.*) - [E=BASE_URI:%1]
+
+# Permet de définir BASE_URI à vide pour le domain api.okanban.local
+RewriteCond %{HTTP_HOST} ^api.okanban.local$
+RewriteRule . - [E=BASE_URI:]
+
+# On redirige toutes les URL vers le fichier frontcontroller.php
+# placé à la racine du site
+# et on donne l'url relative en paramètre d'URL dans _url ($_GET param)
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^(.*)$ index.php?_url=/$1 [QSA,L]
